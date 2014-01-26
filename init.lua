@@ -1,10 +1,11 @@
--- highlandpools 0.1.0 by paramat
+-- highlandpools 0.1.1 by paramat
 -- For latest stable Minetest back to 0.4.8
 -- Depends default
 -- Licenses: code WTFPL
 
 -- Parameters
 
+local YMAX = 33000 -- Maximum altitude for pools
 local FLOW = 256
 
 -- Stuff
@@ -48,7 +49,7 @@ end
 
 minetest.register_on_generated(function(minp, maxp, seed)
 	local y0 = minp.y
-	if y0 ~= -32 then
+	if y0 < -32 or y0 > YMAX then
 		return
 	end
 	
@@ -80,7 +81,9 @@ minetest.register_on_generated(function(minp, maxp, seed)
 		for y = y1, 2, -1 do
 			local vi = area:index(xcen, y, zcen)
 			local c_node = data[vi]
-			if c_node == c_watsour then
+			if y == y1 and c_node ~= c_air then -- if top node solid
+				break
+			elseif c_node == c_watsour then
 				break
 			elseif c_node == c_grass then
 				yasurf = y + 1
@@ -95,7 +98,6 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if xcen + ser == x1 then
 					abort = true
 				elseif c_node ~= c_air
-				and c_node ~= c_ignore
 				and c_node ~= c_tree
 				and c_node ~= c_leaves
 				and c_node ~= c_apple then
@@ -108,7 +110,6 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if xcen - ser == x0 then
 					abort = true
 				elseif c_node ~= c_air
-				and c_node ~= c_ignore
 				and c_node ~= c_tree
 				and c_node ~= c_leaves
 				and c_node ~= c_apple then
@@ -121,7 +122,6 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if zcen + ser == z1 then
 					abort = true
 				elseif c_node ~= c_air
-				and c_node ~= c_ignore
 				and c_node ~= c_tree
 				and c_node ~= c_leaves
 				and c_node ~= c_apple then
@@ -134,7 +134,6 @@ minetest.register_on_generated(function(minp, maxp, seed)
 				if zcen - ser == z0 then
 					abort = true
 				elseif c_node ~= c_air
-				and c_node ~= c_ignore
 				and c_node ~= c_tree
 				and c_node ~= c_leaves
 				and c_node ~= c_apple then
